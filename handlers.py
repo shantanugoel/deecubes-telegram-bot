@@ -8,7 +8,10 @@ from config import BOT_TOKEN
 
 def process_link(bot, update):
   for entry in update.message.entities:
-    url = update.message.text[entry.offset:entry.offset + entry.length]
+    if entry.url:
+      url = entry.url
+    else:
+      url = update.message.text[entry.offset:entry.offset + entry.length]
     bot.send_message(chat_id=update.message.chat_id, text="Detected link " + url)
 
 
