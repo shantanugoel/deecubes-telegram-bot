@@ -40,7 +40,7 @@ class LinkProcessor():
         url = entry.url
       else:
         url = update.message.text[entry.offset:entry.offset + entry.length]
-      bot.send_message(chat_id=update.message.chat_id, text="Detected link " + url)
+      bot.send_message(chat_id=update.message.chat_id, text="Started Processing link " + url)
       self.process_link_git(url)
 
 
