@@ -3,6 +3,7 @@ from telegram import MessageEntity
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import config
+from utils import restricted
 from links import LinkProcessor
 
 class Handlers():
@@ -31,6 +32,7 @@ class Handlers():
     bot.send_message(chat_id=update.message.chat_id, text="Hello. Send me a link or file")
 
 
+  @restricted
   def process_links(self, bot, update):
     context = {
       'chat_id': update.message.chat_id,
