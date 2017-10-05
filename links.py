@@ -2,6 +2,7 @@ import logging
 import os
 from urllib.parse import urlparse
 from git import Repo
+from telegram.error import TelegramError
 
 import config
 
@@ -13,8 +14,15 @@ class LinkProcessor():
     if not config.LINKS_REPO_PATH_LOCAL_ABS:
       repo_path_local_base = os.path.expanduser('~')
     repo_path_local = os.path.join(repo_path_local_base, config.LINKS_REPO_PATH_LOCAL)
-    #TODO: Error handling when repo already cloned
-    repo = Repo.clone_from(config.LINKS_REPO_URL, repo_path_local)
+    repo = Repo.init(repo_path_local)
+    try:
+      repo.remotes.origin.exists()
+      if repo.remotes.origin.url != config.LINKS_REPO_URL:
+        raise TelegramError('Links repository path seems to be conflicting with another repo')
+    except AttributeError:
+      repo.create_remote('origin', config.LINKS_REPO_URL)
+    repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
+
 
   def process_links(self, bot, update):
     for entry in update.message.entities:
