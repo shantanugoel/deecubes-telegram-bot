@@ -27,6 +27,7 @@ class LinkProcessor():
     except AttributeError:
       self.repo.create_remote('origin', config.LINKS_REPO_URL)
     self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
+    self.repo.git.checkout(config.LINKS_REPO_BRANCH)
 
     # Init Shortener
     raw_path = os.path.join(self.repo_path_local, 'raw')
@@ -53,3 +54,4 @@ class LinkProcessor():
     self.repo.git.add(A=True)
     author = Actor('deecubes_bot', 'shantanu.goel@gmail.com')
     self.repo.index.commit('Added url through deecubes_bot', author=author)
+    self.repo.remotes.origin.push(config.LINKS_REPO_BRANCH)
