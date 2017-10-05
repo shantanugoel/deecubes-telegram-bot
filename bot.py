@@ -2,7 +2,7 @@ import logging
 import argparse
 
 from constants import VERSION
-from handlers import init
+from handlers import Handlers
 
 def main():
   parser = argparse.ArgumentParser(prog='deecubes-tg')
@@ -20,7 +20,7 @@ def main():
     log_level = logging.WARNING
   logging.basicConfig(level=log_level, format='%(asctime)s: %(filename)s - %(message)s')
 
-  init()
+  Handlers()
 
 if __name__ == "__main__":
   main()

@@ -34,13 +34,13 @@ class LinkProcessor():
     self.shortener = Shortener(raw_path, output_path)
 
 
-  def process_links(self, bot, update):
-    for entry in update.message.entities:
+  def process_links(self, bot, job):
+    for entry in job.context['entities']:
       if entry.url:
         url = entry.url
       else:
-        url = update.message.text[entry.offset:entry.offset + entry.length]
-      bot.send_message(chat_id=update.message.chat_id, text="Started Processing link " + url)
+        url = job.context['text'][entry.offset:entry.offset + entry.length]
+      bot.send_message(chat_id=job.context['chat_id'], text="Started Processing link " + url)
       self.process_link_git(url)
 
 
