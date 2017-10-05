@@ -8,16 +8,18 @@ from links import LinkProcessor
 class Handlers():
 
   updater = None
+  links_processor = None
 
   def __init__(self):
     self.updater = Updater(token=config.BOT_TOKEN)
     dispatcher = self.updater.dispatcher
+    self.links_processor = LinkProcessor()
 
     dispatcher.add_handler(CommandHandler('start', self.start))
     dispatcher.add_handler(
       MessageHandler(
         Filters.text & (Filters.entity(MessageEntity.URL) | Filters.entity(MessageEntity.TEXT_LINK)),
-        self.links_processor
+        self.process_links
       )
     )
 
@@ -29,11 +31,10 @@ class Handlers():
     bot.send_message(chat_id=update.message.chat_id, text="Hello. Send me a link or file")
 
 
-  def links_processor(self, bot, update):
-    lp = LinkProcessor()
+  def process_links(self, bot, update):
     context = {
       'chat_id': update.message.chat_id,
       'text': update.message.text,
       'entities': update.message.entities
     }
-    self.updater.job_queue.run_once(lp.process_links, 0, context=context)
+    self.updater.job_queue.run_once(self.links_processor.process_links, 0, context=context)
