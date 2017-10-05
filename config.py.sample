@@ -1,0 +1,15 @@
+BOT_TOKEN='YOUR-TOKEN-HERE'
+
+LINKS_BASE_URL='https://shgl.in/'
+
+LINKS_REPO_URL='git@github.com:shantanugoel/deecubes-bot-test.git'
+
+# Path is absolute or relative to home dir
+LINKS_REPO_PATH_LOCAL_ABS=False
+
+LINKS_REPO_PATH_LOCAL='deecubes'
+
+LINKS_REPO_BRANCH='source'
+
+# Add userids (number) in the list below for the users who are allowed to use the bot. If the list is empty, anyone is allowed
+LIST_ALLOWED_USERS=[]
