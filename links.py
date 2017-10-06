@@ -39,10 +39,13 @@ class LinkProcessor():
     #TODO: Add deploy key mechanism for servers
     #TODO: Need to get the generated url but need to update deecubes for that
     #TODO: Add link sanitiser either here or in deecubes to add missing scheme
+    #TODO: deecubes should return existing shorturl if asked to shorten same url again
     self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
-    shorturl = config.LINKS_BASE_URL + self.shortener.generate(url)
+    shorturl = self.shortener.generate(url)
     self.repo.git.add(A=True)
     author = Actor('deecubes_bot', 'shantanu.goel@gmail.com')
     self.repo.index.commit('Added url through deecubes_bot', author=author)
     self.repo.remotes.origin.push(config.LINKS_REPO_BRANCH)
+    if shorturl:
+      shorturl = config.LINKS_BASE_URL + shorturl
     return shorturl

@@ -51,8 +51,13 @@ class Handlers():
       else:
         url = job.context['text'][entry.offset:entry.offset + entry.length]
       shorturl = self.links_processor.process_link(url)
+      if shorturl:
+        text = 'Shorturl ' + shorturl + ' created for ' + url
+      else:
+        text = 'Could not create shorturl for ' + url
+
       bot.send_message(
         chat_id=job.context['chat_id'],
         reply_to_message_id=job.context['message_id'],
-        text='Shorturl ' + shorturl + ' created for ' + url,
+        text=text
       )
