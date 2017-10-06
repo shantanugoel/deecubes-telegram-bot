@@ -40,8 +40,9 @@ class LinkProcessor():
     #TODO: Need to get the generated url but need to update deecubes for that
     #TODO: Add link sanitiser either here or in deecubes to add missing scheme
     self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
-    self.shortener.generate(url)
+    shorturl = config.LINKS_BASE_URL + self.shortener.generate(url)
     self.repo.git.add(A=True)
     author = Actor('deecubes_bot', 'shantanu.goel@gmail.com')
     self.repo.index.commit('Added url through deecubes_bot', author=author)
     self.repo.remotes.origin.push(config.LINKS_REPO_BRANCH)
+    return shorturl

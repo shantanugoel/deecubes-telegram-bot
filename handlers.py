@@ -36,6 +36,7 @@ class Handlers():
   def process_links(self, bot, update):
     context = {
       'chat_id': update.message.chat_id,
+      'message_id': update.message.message_id,
       'text': update.message.text,
       'entities': update.message.entities
     }
@@ -49,4 +50,9 @@ class Handlers():
         url = entry.url
       else:
         url = job.context['text'][entry.offset:entry.offset + entry.length]
-      self.links_processor.process_link(url)
+      shorturl = self.links_processor.process_link(url)
+      bot.send_message(
+        chat_id=job.context['chat_id'],
+        reply_to_message_id=job.context['message_id'],
+        text='Shorturl ' + shorturl + ' created for ' + url,
+      )
