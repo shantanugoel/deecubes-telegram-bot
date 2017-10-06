@@ -102,14 +102,13 @@ class Handlers():
               logging.warning('Unsupported file type')
 
     if content:
-      file_id = content.file_id
-      print(bot.get_file(file_id).file_path)
-      print(content.file_name)
+      file_obj = bot.get_file(content.file_id)
       try:
+        # Original file name is only given for documents
         file_name = content.file_name
       except AttributeError:
-        file_name = None
-      url = self.files_processor.process_file(content.file_id)
+        file_name = basename(file_obj.file_path)
+      url = self.files_processor.process_file(file_obj, file_name)
       if url:
         text = 'File uploaded to ' + url
         #TODO: Add url shortening as well

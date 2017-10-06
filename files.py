@@ -3,7 +3,7 @@ import os
 from urllib.parse import urlparse
 from git import Repo, Actor
 from telegram.error import TelegramError
-from telegram import File
+from uuid import uuid4
 from deecubes.shortener import Shortener
 
 import config
@@ -34,18 +34,20 @@ class FileProcessor():
     self.files_path = os.path.join(self.repo_path_local, 'docs')
 
 
-  def process_file(self, id):
+  def process_file(self, file_obj, file_name):
     #TODO: Add deploy key mechanism for servers
     #TODO: Remove telegram download method from here
     self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
-    url = None
-    #File(id).download(custom_path=self.files_path)
-    url = File(id).file_path
-    print(url)
-    #self.repo.git.add(A=True)
-    #author = Actor(config.FILES_REPO_AUTHOR_NAME, config.FILES_REPO_AUTHOR_EMAIL)
-    #self.repo.index.commit('Added url through deecubes_bot', author=author)
-    #self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
-    if url:
-      url = config.FILES_BASE_URL + url
-    return url
+    file_path = os.path.join(self.files_path, file_name)
+    if os.path.exists(file_path):
+      file_name = str(uuid4()) + '-' + file_name
+      file_path = os.path.join(self.files_path, file_name)
+
+    #TODO: Add error handling for file io exceptions
+    with open(file_path, 'wb') as out:
+      file_obj.download(out=out)
+    self.repo.git.add(A=True)
+    author = Actor(config.FILES_REPO_AUTHOR_NAME, config.FILES_REPO_AUTHOR_EMAIL)
+    self.repo.index.commit('Added url through deecubes_bot', author=author)
+    self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
+    return config.FILES_BASE_URL + file_name
