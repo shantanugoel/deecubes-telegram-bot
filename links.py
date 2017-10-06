@@ -42,7 +42,7 @@ class LinkProcessor():
     self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
     shorturl = self.shortener.generate(url)
     self.repo.git.add(A=True)
-    author = Actor('deecubes_bot', 'shantanu.goel@gmail.com')
+    author = Actor(config.LINKS_REPO_AUTHOR_NAME, config.LINKS_REPO_AUTHOR_EMAIL)
     self.repo.index.commit('Added url through deecubes_bot', author=author)
     self.repo.remotes.origin.push(config.LINKS_REPO_BRANCH)
     if shorturl:

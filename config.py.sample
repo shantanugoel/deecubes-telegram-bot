@@ -11,5 +11,9 @@ LINKS_REPO_PATH_LOCAL='deecubes'
 
 LINKS_REPO_BRANCH='source'
 
+LINKS_REPO_AUTHOR_NAME='deecubes_bot'
+
+LINKS_REPO_AUTHOR_EMAIL='shantanu.goel@gmail.com'
+
 # Add userids (number) in the list below for the users who are allowed to use the bot. If the list is empty, anyone is allowed
 LIST_ALLOWED_USERS=[]
