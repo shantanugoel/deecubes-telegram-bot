@@ -112,6 +112,9 @@ class Handlers():
       if url:
         text = 'File uploaded to ' + url
         #TODO: Add url shortening as well
+        shorturl = self.links_processor.process_link(url)
+        if shorturl:
+          text += '\nShorturl: ' + shorturl
       else:
         text = 'Could not upload file'
     else:
