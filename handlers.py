@@ -111,7 +111,6 @@ class Handlers():
       url = self.files_processor.process_file(file_obj, file_name)
       if url:
         text = 'File uploaded to ' + url
-        #TODO: Add url shortening as well
         shorturl = self.links_processor.process_link(url)
         if shorturl:
           text += '\nShorturl: ' + shorturl
