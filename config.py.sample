@@ -1,5 +1,8 @@
 BOT_TOKEN='YOUR-TOKEN-HERE'
 
+# Add userids (number) in the list below for the users who are allowed to use the bot. If the list is empty, anyone is allowed
+LIST_ALLOWED_USERS=[]
+
 LINKS_BASE_URL='https://shgl.in/'
 
 LINKS_REPO_URL='git@github.com:shantanugoel/deecubes-bot-test.git'
@@ -15,5 +18,10 @@ LINKS_REPO_AUTHOR_NAME='deecubes_bot'
 
 LINKS_REPO_AUTHOR_EMAIL='shantanu.goel@gmail.com'
 
-# Add userids (number) in the list below for the users who are allowed to use the bot. If the list is empty, anyone is allowed
-LIST_ALLOWED_USERS=[]
+FILES_BASE_URL='https://shgl.in/'
+FILES_REPO_PATH_LOCAL_ABS=False
+FILES_REPO_URL='https://github.com/shantanugoel/deecubes-bot-test.git'
+FILES_REPO_PATH_LOCAL='deecubes-files'
+FILES_REPO_BRANCH='master'
+FILES_REPO_AUTHOR_NAME='deecubes_bot'
+FILES_REPO_AUTHOR_EMAIL='shantanu.goel@gmail.com'
