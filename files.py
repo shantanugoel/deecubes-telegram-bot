@@ -3,6 +3,7 @@ import os
 from urllib.parse import urlparse
 from git import Repo, Actor
 from telegram.error import TelegramError
+from telegram import File
 from deecubes.shortener import Shortener
 
 import config
@@ -33,17 +34,18 @@ class FileProcessor():
     self.files_path = os.path.join(self.repo_path_local, 'docs')
 
 
-  def process_file(self):
-    return
+  def process_file(self, id):
     #TODO: Add deploy key mechanism for servers
+    #TODO: Remove telegram download method from here
     self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
-    #TODO: Add file handling
     url = None
-
-    self.repo.git.add(A=True)
-    author = Actor(config.FILES_REPO_AUTHOR_NAME, config.FILES_REPO_AUTHOR_EMAIL)
-    self.repo.index.commit('Added url through deecubes_bot', author=author)
-    self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
+    #File(id).download(custom_path=self.files_path)
+    url = File(id).file_path
+    print(url)
+    #self.repo.git.add(A=True)
+    #author = Actor(config.FILES_REPO_AUTHOR_NAME, config.FILES_REPO_AUTHOR_EMAIL)
+    #self.repo.index.commit('Added url through deecubes_bot', author=author)
+    #self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
     if url:
       url = config.FILES_BASE_URL + url
     return url

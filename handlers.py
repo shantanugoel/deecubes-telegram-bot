@@ -83,31 +83,43 @@ class Handlers():
 
   def process_files_queue(self, bot, job):
     content = None
+    message = job.context['message']
     try:
-      content = job.context['message'].document
+      content = message.document
     except AttributeError:
       try:
-        content = job.context['message'].photo
+        content = message.photo
       except AttributeError:
         try:
-          content = job.context['message'].video
+          content = message.video
         except AttributeError:
           try:
-            content = job.context['message'].audio
+            content = message.audio
           except AttributeError:
             try:
-              content = job.context['message'].voice
+              content = message.voice
             except AttributeError:
               logging.warning('Unsupported file type')
 
     if content:
-      text = str(content.file_id)
-      self.files_processor.process_file()
+      file_id = content.file_id
+      print(bot.get_file(file_id).file_path)
+      print(content.file_name)
+      try:
+        file_name = content.file_name
+      except AttributeError:
+        file_name = None
+      url = self.files_processor.process_file(content.file_id)
+      if url:
+        text = 'File uploaded to ' + url
+        #TODO: Add url shortening as well
+      else:
+        text = 'Could not upload file'
     else:
       text = 'Unsupported file type'
 
     bot.send_message(
-      chat_id=job.context['message'].chat_id,
-      reply_to_message_id=job.context['message'].message_id,
+      chat_id=message.chat_id,
+      reply_to_message_id=message.message_id,
       text=text
     )
