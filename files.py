@@ -18,7 +18,7 @@ class FileProcessor():
 
   def __init__(self):
     if config.LINKS_REPO_DEPLOY_KEY:
-      self.ssh_cmd='ssh -i ' + config.LINKS_REPO_DEPLOY_KEY
+      self.ssh_cmd='ssh -i ' + config.FILES_REPO_DEPLOY_KEY
 
     repo_path_local_base = ''
     if not config.FILES_REPO_PATH_LOCAL_ABS:
