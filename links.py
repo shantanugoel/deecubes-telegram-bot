@@ -36,7 +36,7 @@ class LinkProcessor():
 
     # Init Shortener
     raw_path = os.path.join(self.repo_path_local, 'raw')
-    output_path = os.path.join(self.repo_path_local, 'output')
+    output_path = os.path.join(self.repo_path_local, 'output/docs')
     self.shortener = Shortener(raw_path, output_path)
 
 
