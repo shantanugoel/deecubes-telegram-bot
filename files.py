@@ -14,8 +14,12 @@ class FileProcessor():
   repo = None
   repo_path_local = None
   files_path = None
+  ssh_cmd = 'ssh'
 
   def __init__(self):
+    if config.LINKS_REPO_DEPLOY_KEY:
+      self.ssh_cmd='ssh -i ' + config.LINKS_REPO_DEPLOY_KEY
+
     repo_path_local_base = ''
     if not config.FILES_REPO_PATH_LOCAL_ABS:
       repo_path_local_base = os.path.expanduser('~')
@@ -27,7 +31,8 @@ class FileProcessor():
         raise TelegramError('Links repository path seems to be conflicting with another repo')
     except AttributeError:
       self.repo.create_remote('origin', config.FILES_REPO_URL)
-    self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
+    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
+      self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
     self.repo.git.checkout(config.FILES_REPO_BRANCH)
 
     # Init Shortener
@@ -35,9 +40,9 @@ class FileProcessor():
 
 
   def process_file(self, file_obj, file_name):
-    #TODO: Add deploy key mechanism for servers
     #TODO: Remove telegram download method from here
-    self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
+    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
+      self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
     file_path = os.path.join(self.files_path, file_name)
     if os.path.exists(file_path):
       file_name = str(uuid4()) + '-' + file_name
@@ -49,5 +54,6 @@ class FileProcessor():
     self.repo.git.add(A=True)
     author = Actor(config.FILES_REPO_AUTHOR_NAME, config.FILES_REPO_AUTHOR_EMAIL)
     self.repo.index.commit('Added url through deecubes_bot', author=author)
-    self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
+    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
+      self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
     return config.FILES_BASE_URL + file_name

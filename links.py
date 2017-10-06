@@ -13,8 +13,12 @@ class LinkProcessor():
   repo = None
   repo_path_local = None
   shortener = None
+  ssh_cmd = 'ssh'
 
   def __init__(self):
+    if config.LINKS_REPO_DEPLOY_KEY:
+      self.ssh_cmd='ssh -i ' + config.LINKS_REPO_DEPLOY_KEY
+
     repo_path_local_base = ''
     if not config.LINKS_REPO_PATH_LOCAL_ABS:
       repo_path_local_base = os.path.expanduser('~')
@@ -26,7 +30,8 @@ class LinkProcessor():
         raise TelegramError('Links repository path seems to be conflicting with another repo')
     except AttributeError:
       self.repo.create_remote('origin', config.LINKS_REPO_URL)
-    self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
+    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
+      self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
     self.repo.git.checkout(config.LINKS_REPO_BRANCH)
 
     # Init Shortener
@@ -36,13 +41,14 @@ class LinkProcessor():
 
 
   def process_link(self, url):
-    #TODO: Add deploy key mechanism for servers
-    self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
+    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
+      self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
     shorturl = self.shortener.generate(url)
     self.repo.git.add(A=True)
     author = Actor(config.LINKS_REPO_AUTHOR_NAME, config.LINKS_REPO_AUTHOR_EMAIL)
     self.repo.index.commit('Added url through deecubes_bot', author=author)
-    self.repo.remotes.origin.push(config.LINKS_REPO_BRANCH)
+    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
+      self.repo.remotes.origin.push(config.LINKS_REPO_BRANCH)
     if shorturl:
       shorturl = config.LINKS_BASE_URL + shorturl
     return shorturl
