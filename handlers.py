@@ -39,4 +39,14 @@ class Handlers():
       'text': update.message.text,
       'entities': update.message.entities
     }
-    self.updater.job_queue.run_once(self.links_processor.process_links, 0, context=context)
+    update.message.reply_text('Processing', quote=True)
+    self.updater.job_queue.run_once(self.process_links_queue, 0, context=context)
+
+
+  def process_links_queue(self, bot, job):
+    for entry in job.context['entities']:
+      if entry.url:
+        url = entry.url
+      else:
+        url = job.context['text'][entry.offset:entry.offset + entry.length]
+      self.links_processor.process_link(url)

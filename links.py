@@ -35,17 +35,7 @@ class LinkProcessor():
     self.shortener = Shortener(raw_path, output_path)
 
 
-  def process_links(self, bot, job):
-    for entry in job.context['entities']:
-      if entry.url:
-        url = entry.url
-      else:
-        url = job.context['text'][entry.offset:entry.offset + entry.length]
-      bot.send_message(chat_id=job.context['chat_id'], text="Started Processing link " + url)
-      self.process_link_git(url)
-
-
-  def process_link_git(self, url):
+  def process_link(self, url):
     #TODO: Add deploy key mechanism for servers
     #TODO: Need to get the generated url but need to update deecubes for that
     #TODO: Add link sanitiser either here or in deecubes to add missing scheme
