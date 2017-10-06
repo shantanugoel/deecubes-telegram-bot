@@ -18,7 +18,7 @@ LINKS_REPO_AUTHOR_NAME='deecubes_bot'
 
 LINKS_REPO_AUTHOR_EMAIL='shantanu.goel@gmail.com'
 
-FILES_BASE_URL='https://shgl.in/'
+FILES_BASE_URL='https://stuff.shantanugoel.com/'
 FILES_REPO_PATH_LOCAL_ABS=False
 FILES_REPO_URL='https://github.com/shantanugoel/deecubes-bot-test.git'
 FILES_REPO_PATH_LOCAL='deecubes-files'
