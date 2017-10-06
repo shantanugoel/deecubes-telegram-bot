@@ -37,7 +37,6 @@ class LinkProcessor():
 
   def process_link(self, url):
     #TODO: Add deploy key mechanism for servers
-    #TODO: Need to get the generated url but need to update deecubes for that
     #TODO: Add link sanitiser either here or in deecubes to add missing scheme
     #TODO: deecubes should return existing shorturl if asked to shorten same url again
     self.repo.remotes.origin.pull(config.LINKS_REPO_BRANCH)
