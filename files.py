@@ -30,10 +30,11 @@ class FileProcessor():
     self.repo.git.checkout(config.FILES_REPO_BRANCH)
 
     # Init Shortener
-    files_path = os.path.join(self.repo_path_local, files_path)
+    self.files_path = os.path.join(self.repo_path_local, 'docs')
 
 
-  def process_file(self, url):
+  def process_file(self):
+    return
     #TODO: Add deploy key mechanism for servers
     self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
     #TODO: Add file handling

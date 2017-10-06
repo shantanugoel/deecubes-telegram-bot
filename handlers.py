@@ -5,18 +5,27 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import config
 from utils import restricted
 from links import LinkProcessor
+from files import FileProcessor
 
 class Handlers():
 
   updater = None
   links_processor = None
+  files_processor = None
 
   def __init__(self):
     self.updater = Updater(token=config.BOT_TOKEN)
     dispatcher = self.updater.dispatcher
     self.links_processor = LinkProcessor()
+    self.files_processor = FileProcessor()
 
     dispatcher.add_handler(CommandHandler('start', self.start))
+    dispatcher.add_handler(
+      MessageHandler(
+        Filters.audio | Filters.video | Filters.photo | Filters.document | Filters.voice,
+        self.process_files
+      )
+    )
     dispatcher.add_handler(
       MessageHandler(
         Filters.text & (Filters.entity(MessageEntity.URL) | Filters.entity(MessageEntity.TEXT_LINK)),
@@ -61,3 +70,44 @@ class Handlers():
         reply_to_message_id=job.context['message_id'],
         text=text
       )
+
+
+  @restricted
+  def process_files(self, bot, update):
+    context = {
+      'message': update.message,
+    }
+    update.message.reply_text('Processing', quote=True)
+    self.updater.job_queue.run_once(self.process_files_queue, 0, context=context)
+
+
+  def process_files_queue(self, bot, job):
+    content = None
+    try:
+      content = job.context['message'].document
+    except AttributeError:
+      try:
+        content = job.context['message'].photo
+      except AttributeError:
+        try:
+          content = job.context['message'].video
+        except AttributeError:
+          try:
+            content = job.context['message'].audio
+          except AttributeError:
+            try:
+              content = job.context['message'].voice
+            except AttributeError:
+              logging.warning('Unsupported file type')
+
+    if content:
+      text = str(content.file_id)
+      self.files_processor.process_file()
+    else:
+      text = 'Unsupported file type'
+
+    bot.send_message(
+      chat_id=job.context['message'].chat_id,
+      reply_to_message_id=job.context['message'].message_id,
+      text=text
+    )
