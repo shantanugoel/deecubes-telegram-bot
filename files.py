@@ -35,10 +35,20 @@ class FileProcessor:
     # Init Shortener
     self.files_path = os.path.join(self.repo_path_local, 'docs')
 
-  def process_file(self, file_obj, file_name):
-    # TODO: Remove telegram download method from here
+  def git_pre(self):
     with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
       self.repo.remotes.origin.pull(config.FILES_REPO_BRANCH)
+
+  def git_post(self):
+    self.repo.git.add(A=True)
+    author = Actor(config.FILES_REPO_AUTHOR_NAME, config.FILES_REPO_AUTHOR_EMAIL)
+    self.repo.index.commit('Added url through deecubes_bot', author=author)
+    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
+      self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
+
+  def process_file(self, file_obj, file_name):
+    # TODO: Remove telegram download method from here
+    self.git_pre()
     file_path = os.path.join(self.files_path, file_name)
     if os.path.exists(file_path):
       file_name = str(uuid4()) + '-' + file_name
@@ -47,14 +57,25 @@ class FileProcessor:
     # TODO: Add error handling for file io exceptions
     with open(file_path, 'wb') as out:
       file_obj.download(out=out)
-    self.repo.git.add(A=True)
-    author = Actor(config.FILES_REPO_AUTHOR_NAME, config.FILES_REPO_AUTHOR_EMAIL)
-    self.repo.index.commit('Added url through deecubes_bot', author=author)
-    with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
-      self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
+    self.git_post()
     return config.FILES_BASE_URL + file_name
 
   def process_paste(self, content, file_name, make_image):
-    pass
-    #if not file_name:
-    #  file_name = str(uuid4()) + '.txt'
+    if not file_name:
+      file_name = str(uuid4())
+      if make_image:
+        file_name += '.jpg'
+      else:
+        file_name += '.txt'
+
+    self.git_pre()
+    file_path = os.path.join(self.files_path, file_name)
+    if os.path.exists(file_path):
+      file_name = str(uuid4()) + '-' + file_name
+      file_path = os.path.join(self.files_path, file_name)
+
+    if not make_image:
+      with open(file_path, 'w') as f:
+        f.write(content)
+    self.git_post()
+    return config.FILES_BASE_URL + file_name
