@@ -4,6 +4,7 @@ from telegram.error import TelegramError
 from uuid import uuid4
 
 import config
+from utils import text2jpg
 
 
 class FileProcessor:
@@ -64,7 +65,7 @@ class FileProcessor:
     if not file_name:
       file_name = str(uuid4())
       if make_image:
-        file_name += '.jpg'
+        file_name += '.png'
       else:
         file_name += '.txt'
 
@@ -74,7 +75,9 @@ class FileProcessor:
       file_name = str(uuid4()) + '-' + file_name
       file_path = os.path.join(self.files_path, file_name)
 
-    if not make_image:
+    if make_image:
+      text2jpg(content, file_path)
+    else:
       with open(file_path, 'w') as f:
         f.write(content)
     self.git_post()
