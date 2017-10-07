@@ -54,5 +54,7 @@ class FileProcessor:
       self.repo.remotes.origin.push(config.FILES_REPO_BRANCH)
     return config.FILES_BASE_URL + file_name
 
-  def process_paste(self, text, file_name):
+  def process_paste(self, content, file_name, make_image):
     pass
+    #if not file_name:
+    #  file_name = str(uuid4()) + '.txt'

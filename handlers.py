@@ -66,7 +66,32 @@ class Handlers:
     self.updater.job_queue.run_once(self.process_paste_queue, 0, context=context)
 
   def process_paste_queue(self, bot, job):
-    pass
+    command = job.context['paste_command']
+    make_img = False
+    file_name = None
+    if command == '/pastei':
+      make_img = True
+    if command == '/pasten':
+      data = job.context['text'].split(' ', 2)
+      file_name = os.path.basename(data[1])
+    else:
+      data = job.context['text'].split(' ', 1)
+    content = data[-1]
+
+    url = self.files_processor.process_paste(content, file_name, make_img)
+    if url:
+      text = 'Paste uploaded to ' + url
+      shorturl = self.links_processor.process_link(url)
+      if shorturl:
+        text += '\nShorturl: ' + shorturl
+    else:
+      text = 'Could not upload paste'
+
+    bot.send_message(
+      chat_id=job.context['chat_id'],
+      reply_to_message_id=job.context['message_id'],
+      text=text
+    )
 
   @restricted
   def process_links(self, bot, update):
