@@ -21,6 +21,9 @@ class Handlers:
     self.files_processor = FileProcessor()
 
     dispatcher.add_handler(CommandHandler('start', self.start))
+    dispatcher.add_handler(CommandHandler('paste', self.paste))
+    dispatcher.add_handler(CommandHandler('pasten', self.paste_named))
+    dispatcher.add_handler(CommandHandler('pastei', self.paste_image))
     dispatcher.add_handler(
       MessageHandler(
         Filters.audio | Filters.video | Filters.photo | Filters.document | Filters.voice,
@@ -38,7 +41,32 @@ class Handlers:
     self.updater.idle()
 
   def start(self, bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text="Hello. Send me a link or file")
+    update.message.reply_text(text="Hello! Send me a link or file but tread with caution. I only tend to my master.")
+
+  @restricted
+  def paste(self, bot, update):
+    self.process_paste(update, '/paste')
+
+  @restricted
+  def paste_named(self, bot, update):
+    self.process_paste(update, '/pasten')
+
+  @restricted
+  def paste_image(self, bot, update):
+    self.process_paste(update, '/pastei')
+
+  def process_paste(self, update, paste_command):
+    context = {
+      'chat_id': update.message.chat_id,
+      'message_id': update.message.message_id,
+      'text': update.message.text,
+      'paste_command': paste_command,
+    }
+    update.message.reply_text('Processing', quote=True)
+    self.updater.job_queue.run_once(self.process_paste_queue, 0, context=context)
+
+  def process_paste_queue(self, bot, job):
+    pass
 
   @restricted
   def process_links(self, bot, update):
