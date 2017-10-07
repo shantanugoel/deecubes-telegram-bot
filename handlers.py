@@ -1,4 +1,5 @@
 import logging
+import os
 from telegram import MessageEntity
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -82,32 +83,23 @@ class Handlers():
 
 
   def process_files_queue(self, bot, job):
-    content = None
     message = job.context['message']
-    try:
-      content = message.document
-    except AttributeError:
-      try:
-        content = message.photo
-      except AttributeError:
-        try:
-          content = message.video
-        except AttributeError:
-          try:
-            content = message.audio
-          except AttributeError:
-            try:
-              content = message.voice
-            except AttributeError:
-              logging.warning('Unsupported file type')
+    content = message.effective_attachment
 
-    if content:
+    if isinstance(content, list):
+      for c in content:
+        self.process_single_file(bot, message, c)
+    else:
+      self.process_single_file(bot, message, content)
+
+  def process_single_file(self, bot, message, content):
+    try:
       file_obj = bot.get_file(content.file_id)
       try:
         # Original file name is only given for documents
         file_name = content.file_name
       except AttributeError:
-        file_name = basename(file_obj.file_path)
+        file_name = os.path.basename(file_obj.file_path)
       url = self.files_processor.process_file(file_obj, file_name)
       if url:
         text = 'File uploaded to ' + url
@@ -116,7 +108,7 @@ class Handlers():
           text += '\nShorturl: ' + shorturl
       else:
         text = 'Could not upload file'
-    else:
+    except AttributeError:
       text = 'Unsupported file type'
 
     bot.send_message(
