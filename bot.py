@@ -4,6 +4,7 @@ import argparse
 from constants import VERSION
 from handlers import Handlers
 
+
 def main():
   parser = argparse.ArgumentParser(prog='deecubes-tg')
   parser.add_argument('-v', '--version', action='version', version='%(prog)s version ' + VERSION)
@@ -21,6 +22,7 @@ def main():
   logging.basicConfig(level=log_level, format='%(asctime)s: %(filename)s - %(message)s')
 
   Handlers()
+
 
 if __name__ == "__main__":
   main()

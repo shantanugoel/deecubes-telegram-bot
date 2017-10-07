@@ -3,6 +3,7 @@ from functools import wraps
 
 from config import LIST_ALLOWED_USERS
 
+
 def restricted(func):
     @wraps(func)
     def wrapped(_, bot, update, *args, **kwargs):

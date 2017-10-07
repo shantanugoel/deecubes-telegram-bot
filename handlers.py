@@ -1,4 +1,3 @@
-import logging
 import os
 from telegram import MessageEntity
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
@@ -8,7 +7,8 @@ from utils import restricted
 from links import LinkProcessor
 from files import FileProcessor
 
-class Handlers():
+
+class Handlers:
 
   updater = None
   links_processor = None
@@ -37,10 +37,8 @@ class Handlers():
     self.updater.start_polling()
     self.updater.idle()
 
-
   def start(self, bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Hello. Send me a link or file")
-
 
   @restricted
   def process_links(self, bot, update):
@@ -52,7 +50,6 @@ class Handlers():
     }
     update.message.reply_text('Processing', quote=True)
     self.updater.job_queue.run_once(self.process_links_queue, 0, context=context)
-
 
   def process_links_queue(self, bot, job):
     for entry in job.context['entities']:
@@ -72,7 +69,6 @@ class Handlers():
         text=text
       )
 
-
   @restricted
   def process_files(self, bot, update):
     context = {
@@ -80,7 +76,6 @@ class Handlers():
     }
     update.message.reply_text('Processing', quote=True)
     self.updater.job_queue.run_once(self.process_files_queue, 0, context=context)
-
 
   def process_files_queue(self, bot, job):
     message = job.context['message']

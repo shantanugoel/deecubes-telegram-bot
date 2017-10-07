@@ -1,6 +1,4 @@
-import logging
 import os
-from urllib.parse import urlparse
 from git import Repo, Actor
 from telegram.error import TelegramError
 from deecubes.shortener import Shortener
@@ -8,7 +6,7 @@ from deecubes.shortener import Shortener
 import config
 
 
-class LinkProcessor():
+class LinkProcessor:
 
   repo = None
   repo_path_local = None
@@ -17,7 +15,7 @@ class LinkProcessor():
 
   def __init__(self):
     if config.LINKS_REPO_DEPLOY_KEY:
-      self.ssh_cmd='ssh -i ' + config.LINKS_REPO_DEPLOY_KEY
+      self.ssh_cmd = 'ssh -i ' + config.LINKS_REPO_DEPLOY_KEY
 
     repo_path_local_base = ''
     if not config.LINKS_REPO_PATH_LOCAL_ABS:
@@ -38,7 +36,6 @@ class LinkProcessor():
     raw_path = os.path.join(self.repo_path_local, 'raw')
     output_path = os.path.join(self.repo_path_local, 'output/docs')
     self.shortener = Shortener(raw_path, output_path)
-
 
   def process_link(self, url):
     with self.repo.git.custom_environment(GIT_SSH_COMMAND=self.ssh_cmd):
